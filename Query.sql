@@ -1,3 +1,4 @@
+
 select * from Employees 
 where EmployeeID = 8;
 # 2 
@@ -26,7 +27,7 @@ select CustomerID, ContactName
 #19
 select CustomerID, ContactName
 	from  Customers 
-	having Country = "France"
+	where Country = "France"
 	and CustomerID in 
 	( select CustomerID from Orders) >= 1 ;
 #20
@@ -44,5 +45,56 @@ select CustomerID, ContactName
 	;
 #21
 
+
+
+select 
+	e.FirstName,
+	e.LastName,
+	floor(datediff(now(),e.BirthDate) / 365.25) as Age
+
+from Employees as e
+where floor(datediff(now(),e.BirthDate) / 365.25) > 55;	
 	
+#6
+select 
+	max(floor(datediff(now(),e.BirthDate) / 365.25)) as MaxAge,
+	min(floor(datediff(now(),e.BirthDate) / 365.25)) as MinAge,
+	avg(floor(datediff(now(),e.BirthDate) / 365.25)) as AVGAge
+	from Employees as e
+	where e.City = "London";
+
+#7
+select 
+	e.City,
+	max(floor(datediff(now(),e.BirthDate) / 365.25)) as MaxAge,
+	min(floor(datediff(now(),e.BirthDate) / 365.25)) as MinAge,
+	avg(floor(datediff(now(),e.BirthDate) / 365.25)) as AVGAge
+	from Employees as e
+	group by e.City;
+#8
+select 
+	e.City,
+	max(floor(datediff(now(),e.BirthDate) / 365.25)) as MaxAge,
+	min(floor(datediff(now(),e.BirthDate) / 365.25)) as MinAge,
+	avg(floor(datediff(now(),e.BirthDate) / 365.25)) as AVGAge
+	from Employees as e
+	group by e.City
+	having AVGAge >60;
+#21
+select 
+	c.CompanyName,
+	#o.OrderDate,
+	sum( d.Quantity * d.UnitPrice),
+	sum( d.Quantity) Total
+	#p.ProductName
+	from Customers c
+	join Orders  o 
+		on c.CustomerID = o.CustomerID	
+	join Order_Details d
+		on o.OrderID = d.OrderID
+	join Products p
+		on d.ProductID = p.ProductID
 	
+where p.ProductName = 'Tofu'
+group by c.CompanyName
+;

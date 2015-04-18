@@ -43,6 +43,6 @@ select CustomerID, ContactName
 				where ProductName = "Tofu")))
 	;
 #21
-
+select * from Customers;
 	
 	

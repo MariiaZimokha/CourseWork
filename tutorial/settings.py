@@ -47,7 +47,7 @@ INSTALLED_APPS = (
 
 PUSH_NOTIFICATIONS_SETTINGS = {
         "GCM_API_KEY": "AIzaSyBqq3B-GwEp8BMFi1qxL9rWO67UiFOwd0M",
-#         "APNS_CERTIFICATE": "/path/to/your/certificate.pem",
+        "APNS_CERTIFICATE": "tvserial.pem",
 }
 
 CRONJOBS = [

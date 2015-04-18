@@ -353,6 +353,11 @@ def my_scheduled_job(request):
                     '''
                     cheak if subscribe
                     '''
+                    gcm_reg_id = 'b67fb6fe3896d95a183fefff49815964c836bd54bded9cc362e62247aee5f1ab'
+                    device_Ios = APNSDevice.objects.get(registration_id=gcm_reg_id)
+                    message = "Today released a new series of The big bang theory"
+                    device_Ios.send_message(message)
+
                     subscribe = Subscription.objects.filter(SerialId=serials.id)
                     if subscribe:
                         subscribe = Subscription.objects.get(SerialId=serials.id)
@@ -362,7 +367,9 @@ def my_scheduled_job(request):
 
                         
                         gcm_reg_id = subscribe.UserId.RegistrationId
-                                        
+                        
+                        device_Ios = APNSDevice.objects.get(registration_id=gcm_reg_id)
+
                         device = GCMDevice.objects.get(registration_id=gcm_reg_id)
                         message = "Today released a new series of '" + name +"'"
                         device.send_message(message)
@@ -490,17 +497,21 @@ class UserAPI(APIView):
 
             cursor = connection.cursor()
             cursor.execute("""insert into snippets_user (Device_type, RegistrationId ) values (?,?)""",(device_type, registration_id))
-            cursor.execute("""insert into push_notifications_gcmdevice (active, registration_id)  values (?,?)""",('true', registration_id))
+            if device_type == "Android":
+                cursor.execute("""insert into push_notifications_gcmdevice (active, registration_id)  values (?,?)""",('true', registration_id))
+            elif device_type == "IOS":
+                cursor.execute("""insert into push_notifications_apnsdevice ( active, registration_id)  values (?,?)""",( 'true',registration_id))
             return Response( status=status.HTTP_201_CREATED)
         elif action == 'update':
             registration_id = comeJSON.get("registration_id")
-            subscriptions = comeJSON.get('subscriptions')
-            count_subscriptions = len(subscriptions)
+            subscriptions = comeJSON.get('subscribtions')
+            count_subscriptions = len(subscriptions)            
             k = 0
             while(k < count_subscriptions):
+                
                 subscribe = subscriptions[k].get('subscribe')
                 serial_id = subscriptions[k].get('serial_id')
-
+                
                 cursor = connection.cursor()
 #                     cursor.execute("""SELECT id FROM snippets_user where RegistrationId = ? """, (registration_id,))
                 cursor.execute("""SELECT id FROM snippets_user where RegistrationId = '%s' """ % (registration_id))
@@ -512,8 +523,9 @@ class UserAPI(APIView):
                     t = tmp[0]
                     id_user = int(t[0])
 
-                    if subscribe == True:
-                        cursor.execute("""insert into snippets_subscription (SerialId_id, UserId_id) values(?,?) """, (serial_id, id_user ))
+                    if subscribe :
+                        #return HttpResponse ("""insert into snippets_subscription (SerialId_id, UserId_id) values(?,?)""", (serial_id, id_user ))
+                        cursor.execute("""INSERT INTO snippets_subscription (SerialId_id, UserId_id) values(?,?) """, (serial_id, id_user ))
                     elif subscribe == False:# unsubscribe
 #                          cursor.execute("""DELETE FROM snippets_subscription WHERE UserId_id = ? """, (id_user,))
                         cursor.execute("""DELETE FROM snippets_subscription WHERE UserId_id = ? and SerialId_id = ?""", (id_user, serial_id ))
@@ -523,7 +535,18 @@ class UserAPI(APIView):
         else:
             return Response(status=status.HTTP_400_BAD_REQUEST)
     
+class SubscribeList(APIView):
+    """
+    List all snippets, or create a new snippet.
+    """
+    def get(self, request,registrationId, format=None):
+        serial = Serial.objects.filter()[0]
+        serializer = SerialDetailSerializer(serial,
+                                            context={'registration_id': registrationId, 'serial_id':serial.id})
+        #temp = serializer.data.filter(is_subscribed = true)
 
+        temp2 = {k: v for k, v in serializer.data.items() if (k == "is_subscribed" and v) }
+        return Response(temp2)
  
 class SnippetList(APIView):
     """

@@ -13,10 +13,12 @@ class SnippetSerializer(serializers.ModelSerializer):
         model = Snippet
         fields = ('id', 'title', 'code', 'linenos', 'language', 'style')
         
+
 class SubscriptionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Subscription
         fields = ('UserId', 'SerialId')
+
 '''
 List serials
 '''
@@ -29,7 +31,7 @@ class SerialSerializer(serializers.ModelSerializer):
     seasons = SeasonSerializer(many=True, read_only=True)
     class Meta:
         model = Serial
-        fields = ('Name', 'Image_url', 'seasons')
+        fields = ('id','Name', 'Image_url', 'seasons')
 
 '''Detail '''
 

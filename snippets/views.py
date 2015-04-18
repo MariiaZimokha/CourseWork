@@ -271,7 +271,7 @@ def fill(request):
 # test for push notifications 
 
 def my_scheduled_job(request):
-    urlOnAir='http://api.themoviedb.org/3/tv/airing_today?api_key=472ba12809425252de1bb7945f0b82f1'
+    urlOnAir='http://api.themoviedb.org/3/tv/on_the_air?api_key=472ba12809425252de1bb7945f0b82f1'
     json1 = requests.get(urlOnAir).json()
     total_pages = json1.get('total_pages')
     i = 0
@@ -339,8 +339,8 @@ def my_scheduled_job(request):
                             name = tmp.get('name')
                             episode_number = tmp.get('episode_number')
                             air_date = tmp.get('air_date')
-                            #if air_date is None:
-                            #    break
+                            if air_date is None:
+                                break
                             idEpisode = tmp.get('id')
                             test = Episode.objects.filter(Name=name)
                             if  test is  None:

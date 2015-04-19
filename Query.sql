@@ -44,9 +44,8 @@ select CustomerID, ContactName
 				where ProductName = "Tofu")))
 	;
 #21
-<<<<<<< HEAD
+
 select * from Customers;
-=======
 
 
 
@@ -170,8 +169,61 @@ select
 		on d.ProductID = p.ProductID
 	join  Suppliers s
 		on p.SupplierID = s.SupplierID
-	#where c.Country= s.Country
-	#order by c.Country ,s.Country
-	group by  c.Country
+	group by  c.Country;
 	#having s.Country = c.Country and s.Country != c.Country
-	
+
+#27
+select 
+	#p.ProductName,
+	c.CategoryName,
+	sum(d.Quantity) as quantity,
+	o.OrderDate
+	from Products p 
+	join Categories c
+		on p.CategoryID = c.CategoryID
+	join Order_Details d 
+		on p.ProductID = d.ProductID
+	join Orders o
+		on d.OrderID = o.OrderID
+	where year( o.OrderDate) > 1996 
+	AND year( o.OrderDate) < 1998 
+	group by c.CategoryName
+	#having year(o.OrderDate) > 1996 #and year(o.OrderDate)<1998
+;
+#28
+select 
+	p.ProductName,
+	p.UnitPrice,
+	d.UnitPrice as History_price
+	from Products p 
+	left join Order_Details d 
+		on p.ProductID = d.ProductID
+	group by p.ProductName
+	order by p.ProductName
+;
+
+#29
+select 
+	e.FirstName as chief,
+	ee.FirstName as empployee
+	from Employees e
+	left join Employees ee
+		on e.ReportsTo = ee.EmployeeID
+	order by e.FirstName
+;
+
+#30
+select 
+	e.City as em,
+	c.City as clients,
+	o.ShipVia
+	from Employees e
+	join Orders o
+		on e.EmployeeID = o.EmployeeID
+	join Customers c 
+		on o.CustomerID = c.CustomerID
+	join Products p 
+		on 
+
+;
+

@@ -158,8 +158,8 @@ select
 select 
 	c.Country,
 	sum(CASE WHEN c.Country = s.Country THEN d.Quantity END) domestic,
-	sum(CASE WHEN c.Country != s.Country THEN d.Quantity END) nondomestic,
-	s.Country
+	sum(CASE WHEN c.Country != s.Country THEN d.Quantity END) nondomestic
+	#s.Country
 	#(select s.Country from s  ) domestic
 	from Customers c
 	join Orders  o 
@@ -172,6 +172,6 @@ select
 		on p.SupplierID = s.SupplierID
 	#where c.Country= s.Country
 	#order by c.Country ,s.Country
-	group by  s.Country,c.Country
+	group by  c.Country
 	#having s.Country = c.Country and s.Country != c.Country
 	
